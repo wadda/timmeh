@@ -33,9 +33,7 @@ def get_latlon(self):
                     return latitude, longitude
             else:
                 time.sleep(.1)
-            time.sleep(
-                .7)  # default GE refresh rate is 4 seconds, therefore no refresh older than ~1 second from itself.
-
+            time.sleep(.7)
     except KeyboardInterrupt:
         gpsd_socket.close()
         print('\nTerminated by user\nGood Bye.\n')
