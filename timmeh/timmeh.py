@@ -1,4 +1,6 @@
 # coding=utf-8
+"""Reads latitude/longitude from gpsd client and looks up indexed timezones from color referenced image"""
+import time
 from math import pi
 
 import pyproj
@@ -16,7 +18,7 @@ size_x, size_y = im.size
 pix = im.load()
 
 
-def get_latlon(self):
+def get_latlon():
     """Rings up a gpsd to get current lat/lon"""
     gpsd_socket = agps3.GPSDSocket()
     gpsd_socket.connect()
@@ -40,6 +42,7 @@ def get_latlon(self):
 
 
 def readit(lat, lon):
+    """looks up rgb values on image as key to timezones"""
     x, y = coordinates(lon, lat)
     px = int((x + pi) * ((size_x / 2) / pi))
     py = int(size_y - (y + (pi / 2)) * (size_y / pi))
@@ -47,9 +50,9 @@ def readit(lat, lon):
     color_value_string = str(color_value)
     if color_value_string in bigdic.keys():
         tz = bigdic[color_value_string]
+        return tz
     else:
-        print('NO LUCK')
-    return tz
+        print('NO LUCK, maybe edge')
 
 
 bigdic = {'(0, 0, 105, 255)': 'Etc/GMT-10',
