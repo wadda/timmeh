@@ -5,6 +5,11 @@ import pyproj
 from PIL import Image
 from gps3 import agps3
 
+__author__ = 'Moe'
+__copyright__ = 'Copyright 2016  Moe'
+__license__ = 'MIT'
+__version__ = '0.0.1'
+
 coordinates = pyproj.Proj('+proj=longlat +datum=WGS84 +no_defs')
 im = Image.open("tz_color_sea_image.png")
 size_x, size_y = im.size
@@ -14,7 +19,7 @@ pix = im.load()
 def get_latlon(self):
     """Rings up a gpsd to get current lat/lon"""
     gpsd_socket = agps3.GPSDSocket()
-    gpsd_socket.connect(host='localhost', port=2947)
+    gpsd_socket.connect()
     gpsd_socket.watch()
     data_stream = agps3.DataStream()
 
@@ -25,11 +30,12 @@ def get_latlon(self):
                 if data_stream.lat != 'n/a':
                     latitude = data_stream.lat
                     longitude = data_stream.lon
+                    return latitude, longitude
             else:
                 time.sleep(.1)
             time.sleep(
                 .7)  # default GE refresh rate is 4 seconds, therefore no refresh older than ~1 second from itself.
-            return latitude, longitude
+
     except KeyboardInterrupt:
         gpsd_socket.close()
         print('\nTerminated by user\nGood Bye.\n')
