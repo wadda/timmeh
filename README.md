@@ -8,7 +8,7 @@ Geo-referenced image of the wolrds timezones as a database for rapid offline loo
 
 ![dictionary_lookup](https://cloud.githubusercontent.com/assets/4308824/18680742/54fb836c-7fa8-11e6-94a4-479c0fa5216a.png)
 
-A screen grab was taken of the shapefile found at [The World Timezone Shapefile Repository](http://efele.net/maps/tz/world/)
+A screen grab was taken of the shapefile found at [The World Timezone Shapefile Repository](http://efele.net/maps/tz/world/) and subsequently modified with "quasi-maritime" timezones and unique color index for the polygons.
  
 Lat and lon are converted to pixel coordinates.  The color value of the image is referenced and then "*something/something*" if there is any timezone/locale change and to change it base on a degree of confidence
 
