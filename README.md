@@ -4,8 +4,7 @@
 
 Geo-referenced image of the worlds timezones as a small-footprint database for rapid offline lookup
 
-![Colored_Timezones]((https://cloud.githubusercontent.com/assets/4308824/19038948/a0618588-89c9-11e6-995f-11876032535d.png))
-
+![Colored_Timezones](https://cloud.githubusercontent.com/assets/4308824/19038948/a0618588-89c9-11e6-995f-11876032535d.png)
 ![dictionary_lookup](https://cloud.githubusercontent.com/assets/4308824/18680742/54fb836c-7fa8-11e6-94a4-479c0fa5216a.png)
 
 A screen grab was taken of the shapefile found at [The World Timezone Shapefile Repository](http://efele.net/maps/tz/world/) The files have subsequently been modified with "quasi-maritime" timezones and unique colors indexing  the polygons.
