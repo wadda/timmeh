@@ -10,10 +10,10 @@ from gps3 import agps3
 __author__ = 'Moe'
 __copyright__ = 'Copyright 2016  Moe'
 __license__ = 'MIT'
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 coordinates = pyproj.Proj('+proj=longlat +datum=WGS84 +no_defs')
-im = Image.open('tz_1826x913.png')
+im = Image.open('tz_12559x6280.png')
 size_x, size_y = im.size
 pix = im.load()
 
@@ -49,7 +49,8 @@ def readit(lat, lon):
     color_value_string = str(color_value)
     if color_value_string in bigdic.keys():
         tz = bigdic[color_value_string]
-        print('Timezone:', tz)
+        print('Lat:', lat,' Lon:', lon)
+        print('Timezone:', tz, 'px:', px, 'py:', py)
     else:
         print('NO LUCK, retrieved color values,', color_value_string, 'maybe edge if not multiple of 35')
 
