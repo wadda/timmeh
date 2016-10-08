@@ -39,3 +39,7 @@ When it's all over except the shouting, `timmeh`  might be able to ask if you wa
 
 [pyproj](https://pypi.python.org/pypi/pyproj/1.9.5.1) is also required.  It can also be found at the [Cheese Shop](https://pypi.python.org/pypi/pyproj/1.9.5.1).
 
+Grab your gps and fire up your machine, make sure it all works.
+
+Put `timmeh.py` and the image(s) you want to test in the same directory and `python3 timmeh.py` from your favourite terminal multiple times a day if you're adventurous like me. 
+
