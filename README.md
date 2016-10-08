@@ -17,7 +17,7 @@ This project will use a database, such as this, for simple, rapid offline look u
 ![dictionary_lookup](https://cloud.githubusercontent.com/assets/4308824/18680742/54fb836c-7fa8-11e6-94a4-479c0fa5216a.png)
 
 
-The image file/database may be further reduced as `timmeh` internal logic improves in edge cases and granularity. But then, that depends on tolerances and concern for edge cases. Although one could 'tile' in empty placeholders, or re-reference a cropped region, for regional use.           
+The image file/database may be further reduced as `timmeh` internal logic improves in edge cases and granularity. But then, that depends on tolerances and concern for edge cases. Although one could 'tile' in empty placeholders, or re-reference a cropped region, for regional use. Blah, blah, blah.          
 
 This entire process is functionally similar to when Debian or one of the Ubuntus is installed on a hard drive.  While setting the Timezone/locale a cursor is moved over an image and the user selects a point, 'in the ballpark'.  This timezone selection is made using the software package [Ubiquity](https://en.wikipedia.org/wiki/Ubiquity_(software)), except `timmeh` uses gps input...and the unified database.
 
