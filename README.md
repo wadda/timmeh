@@ -25,7 +25,7 @@ Timezones are plotted from the shapefile found at [The World Timezone Shapefile 
 
 The files have subsequently been modified with "quasi-maritime" timezones and unique colors are assigned indexing  the polygons.
  
-For those timezones at sea, quick and dirty 15 degree polygons were unceremoniously addeded  to test the concept. The 24 *new* polygons were added to the 418 pre-existing named polygon. `uninhabited` isn't an official timezone as far as I can tell, but the entire list of timezones were assigned a colour in 35 point increments.
+For those timezones at sea, quick and dirty 15 degree polygons were unceremoniously addeded  to test the concept. The 24 *new* polygons were added to the 418 pre-existing named polygon. `uninhabited` isn't an official timezone as far as I can tell, but the entire list of timezones (443) were assigned a colour in 35 point increments.
 
 Current logic looks to 8 points (0-315) to see if there is a 'land' timezone within 12 nautical miles, otherwise it becomes 'International' plus or minus the appropriate hour UTC.
 
