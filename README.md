@@ -11,7 +11,7 @@ This image is a projection of the world's timezones `coordinates = pyproj.Proj('
 
 **The Plan**
 
-Currently, that map has a 3.2 kilometer per pixel resolution, at the Equator, with approx. 7% of the derived source file(s) size. 
+Currently, that map has a 7.6km/pixel (4.7mile) pixel resolution, at the Equator, with approx. 7% of the derived source file(s) size. 
 
 This project will use a database, such as this, for simple, rapid offline look up of these timezones, with a small-er-footprint.
 ![dictionary_lookup](https://cloud.githubusercontent.com/assets/4308824/18680742/54fb836c-7fa8-11e6-94a4-479c0fa5216a.png)
@@ -23,13 +23,11 @@ This entire process is functionally similar to when Debian or one of the Ubuntus
 
 Timezones are plotted from the shapefile found at [The World Timezone Shapefile Repository](http://efele.net/maps/tz/world/) 
 
-The files have subsequently been modified with "quasi-maritime" timezones and unique colors are assigned indexing  the polygons.
+Those files have subsequently been modified with "quasi-maritime" timezones and unique colors are assigned indexing the polygons.
  
 For those timezones at sea, quick and dirty 15 degree polygons were unceremoniously addeded  to test the concept. The 24 *new* polygons were added to the 418 pre-existing named polygon. `uninhabited` isn't an official timezone as far as I can tell, but the entire list of timezones (443) were assigned a colour in 35 point increments.
 
 Current logic looks to 8 points (0-315) to see if there is a 'land' timezone within 12 nautical miles, otherwise it becomes 'International' plus or minus the appropriate hour UTC.
-
-Greater precision and methods are being sought while trying to keep a lid on the overall size.
 
 When it's all over except the shouting, `timmeh`  might be able to ask if you want/need to change your timezome/locale, or if confidence is high, make those changes automagically.
 
@@ -39,7 +37,7 @@ When it's all over except the shouting, `timmeh`  might be able to ask if you wa
 
 [pyproj](https://pypi.python.org/pypi/pyproj/1.9.5.1) is also required.  It can also be found at the [Cheese Shop](https://pypi.python.org/pypi/pyproj/1.9.5.1).
 
-Grab your gps and fire up your machine, make sure it all works.
+Grab your machine and fire up your gps, make sure it all works.
 
-Put `timmeh.py` and the image(s) you want to test in the same directory and `python3 timmeh.py` from your favourite terminal multiple times a day if you're adventurous like me. 
+Put `timmeh.py` and the image(s) you want to test in the same directory and `python3 timmeh.py` away on your favourite terminal, multiple times a day if you're adventurous like me. 
 
