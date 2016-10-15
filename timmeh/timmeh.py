@@ -15,7 +15,7 @@ __version__ = '0.0.4'
 
 geoid = Geod(ellps='WGS84')  # For 8 point 'at sea' distance calculation
 coordinates = Proj('+proj=longlat +datum=WGS84 +no_defs')
-im = Image.open('tz_12559x6280.png')  # ('tz_1826x913.png')('NAAU.png')
+im = Image.open('tz_5265x2633.png')  # ('tz_1826x913.png')('NAAU.png')
 size_x, size_y = im.size  # Overall maximums
 color_spread = 35  # Colors in the timezone dictionaries at least 35 points divergent from the next color
 pix = im.load()
