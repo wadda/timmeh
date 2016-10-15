@@ -15,7 +15,7 @@ __version__ = '0.0.4'
 
 geoid = Geod(ellps='WGS84')  # For 8 point 'at sea' distance calculation
 coordinates = Proj('+proj=longlat +datum=WGS84 +no_defs')
-im = Image.open('tz_5265x2633.png')  # ('tz_1826x913.png')('NAAU.png')
+im = Image.open('tz_5265x2633.png')
 size_x, size_y = im.size  # Overall maximums
 color_spread = 35  # Colors in the timezone dictionaries at least 35 points divergent from the next color
 pix = im.load()
@@ -70,7 +70,7 @@ def lookup(lat, lon):
             for bearing in range(0, 315, 45):  # look at 8 points around the original location.
                 new_lon, new_lat = where_go(lat, lon, bearing, DISTANCE)  # return a point
                 px, py, rgb = get_color(new_lat, new_lon)  # Get pixel values
-                if rgb in bigdic.keys():  # and compare.
+                if rgb not in seadic.keys():  # and compare.
                     tz = bigdic[rgb]  # If pegs land it will stay on last land
             return px, py, rgb, tz  # You are in the territorial waters of Deep Burgundy.
 
@@ -116,9 +116,9 @@ def where_go(lat, lon, azimuth, distance):
         lat (float: latitude of solution
      #  __bearing_fro (float): bearing from the solution point to the reference point
     """
-    new_lon, new_lat, __bearing_fro = geoid.fwd(lat, lon, azimuth, distance)  # How easy is that?
+    new_lon, new_lat, __bearing_fro = geoid.fwd(lon, lat, azimuth, distance)  # How easy is that?
 
-    return new_lat, new_lon
+    return new_lon, new_lat
 
 
 seadic = {(0,   0,  35): 'Etc/GMT-12',
