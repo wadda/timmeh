@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 # coding=utf-8
-"""Reads latitude/longitude from gpsd client and looks up indexed timezones from color referenced image"""
+"""Reads latitude/longitude from gpsd and looks up indexed timezones on color referenced image"""
 import time
 from math import pi
 
@@ -13,19 +13,19 @@ __copyright__ = 'Copyright 2016  Moe'
 __license__ = 'MIT'
 __version__ = '0.0.5'
 
-geoid = Geod(ellps='WGS84')  # For 8 point 'at sea' distance calculation
-coordinates = Proj('+proj=longlat +datum=WGS84 +no_defs')
-tz_image = Image.open('tz_5265x2633.png')
+tz_image = Image.open('tz_5265x2633.png')  # timezone width x height
 max_columns, max_rows = tz_image.size  # Overall maximums
+pixel_array = tz_image.load()
+coordinates = Proj('+proj=longlat +datum=WGS84 +no_defs')  # pixel array projection (shapefile)
 color_spread = 35  # Colors in the timezone dictionaries at least 35 points divergent from the next color
-pix = tz_image.load()
 
 CONVERSION = {'imperial': 1609.344, 'metric': 1000.0, 'nautical': 1852.0}
-DISTANCE = CONVERSION['nautical'] * 12  # International Waters
+DISTANCE = CONVERSION['nautical'] * 12  # International Waters is 12 nautical miles, as I recall.
+geoid = Geod(ellps='WGS84')  # For the points (currently 8@45degrees) for 'at sea' DISTANCE calculation (12nm)
 
 
 def get_latlon():
-    """Rings up a gpsd to get current lat/lon"""
+    """gps3 client connects to gpsd for current lat/lon"""
     gpsd_socket = gps3.GPSDSocket()
     gpsd_socket.connect()
     gpsd_socket.watch()
@@ -41,7 +41,7 @@ def get_latlon():
                     gpsd_socket.close()  # close socket after successful
                     return latitude, longitude
             else:
-                time.sleep(.1)  # 1/10th second sleep for requests after lookup yields no result
+                time.sleep(.1)  # 1/10th second sleep for socket requests after lookup yields no result
 
     except KeyboardInterrupt:
         gpsd_socket.close()
@@ -62,7 +62,7 @@ def get_pixel(lat, lon):
     x_coord, y_coord = coordinates(lon, lat)  # x = -pi --> pi; y = 1/2pi --> -1/2pi
     pixel_column = int((x_coord + pi) * ((max_columns / 2) / pi))
     pixel_row = int(max_rows - (y_coord + (pi / 2)) * (max_rows / pi))
-    rgb_values = pix[pixel_column, pixel_row]
+    rgb_values = pixel_array[pixel_column, pixel_row]
     return pixel_column, pixel_row, rgb_values
 
 
@@ -88,18 +88,18 @@ def lookup(lat, lon):
             for bearing in range(0, 315, 45):  # look at 8 points around the original location.
                 new_lon, new_lat = where_go(lat, lon, bearing, DISTANCE)  # return a point
                 pixel_column, pixel_row, rgb_values = get_pixel(new_lat, new_lon)  # Get pixel values
-                if rgb_values not in seadic.keys():  # and compare.
-                    tz = bigdic[rgb_values]  # If pegs land it will stay on last land
-            return pixel_column, pixel_row, rgb_values, tz  # You are in the territorial waters of Deep Burgundy.
+                if rgb_values not in seadic.keys():  # and compare.  Errors are exceptions.
+                    tz = bigdic[rgb_values]  # If it pegs land it will stay on last land because
+            return pixel_column, pixel_row, rgb_values, tz  # you are in the territorial waters of Deep Burgundy.
 
-    except KeyError:
-        pixel_column, pixel_row, rgb_values = get_pixel(lat, lon)  # The pixel RGB may be off for edge reasons
-        rgb_values = tuple(round(value / color_spread) * color_spread for value in rgb_values)
-        if rgb_values in bigdic.keys():  # if is
+    except KeyError:  # This takes care of near-miss color values, but throws errors with melded colors, however,
+        pixel_column, pixel_row, rgb_values = get_pixel(lat, lon)  # If the pixel RGB is off for edge reasons
+        rgb_values = tuple(round(value / color_spread) * color_spread for value in rgb_values)  # slaps them back
+        if rgb_values in bigdic.keys():  # if is in the bigdic
             tz = bigdic[rgb_values]  # use that.
         elif rgb_values in seadic.keys():
             tz = seadic[rgb_values]
-        else:
+        else:  # This should never happen. The whole exception should never happen.
             # print("Lasciate ogne speranza, voi ch'intrate")
             tz = "Gates'o'Hell/Houston"
         return pixel_column, pixel_row, rgb_values, tz
