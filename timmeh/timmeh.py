@@ -11,14 +11,14 @@ from pyproj import Geod, Proj
 __author__ = 'Moe'
 __copyright__ = 'Copyright 2016  Moe'
 __license__ = 'MIT'
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 
 geoid = Geod(ellps='WGS84')  # For 8 point 'at sea' distance calculation
 coordinates = Proj('+proj=longlat +datum=WGS84 +no_defs')
-im = Image.open('tz_5265x2633.png')
-size_x, size_y = im.size  # Overall maximums
+tz_image = Image.open('tz_5265x2633.png')
+max_columns, max_rows = tz_image.size  # Overall maximums
 color_spread = 35  # Colors in the timezone dictionaries at least 35 points divergent from the next color
-pix = im.load()
+pix = tz_image.load()
 
 CONVERSION = {'imperial': 1609.344, 'metric': 1000.0, 'nautical': 1852.0}
 DISTANCE = CONVERSION['nautical'] * 12  # International Waters
@@ -48,60 +48,61 @@ def get_latlon():
         print('\nTerminated by user\nGood Bye.\n')
 
 
-def lookup(lat, lon):
-    """looks up rgb values on image as key to timezones
+def get_pixel(lat, lon):
+    """Unclutters 'lookup' function by converting Latitude/Longitude to return
+    pixel column/row and color value of the pixel.
     Arguments:
         lat (float), Latitude North (positive), South (negative)
         lon (float), Longitude East (positive), West (negative)
     Returns:
-        px (int), pixel column
-        py (int), pixel row
-        color_value (tuple of ints) RGB color values
+        pixel_column (int), x pixel column in image
+        pixel_row (int), y pixel row in image
+        rgb_values (tuple of ints), RGB color tuple
+    """
+    x_coord, y_coord = coordinates(lon, lat)  # x = -pi --> pi; y = 1/2pi --> -1/2pi
+    pixel_column = int((x_coord + pi) * ((max_columns / 2) / pi))
+    pixel_row = int(max_rows - (y_coord + (pi / 2)) * (max_rows / pi))
+    rgb_values = pix[pixel_column, pixel_row]
+    return pixel_column, pixel_row, rgb_values
+
+
+def lookup(lat, lon):
+    """looks up rgb_values values on image as key to timezones
+    Arguments:
+        lat (float), Latitude North (positive), South (negative)
+        lon (float), Longitude East (positive), West (negative)
+    Returns:
+        pixel_column (int), pixel column
+        pixel_row (int), pixel row
+        rgb_values (tuple of ints) RGB color values
         tz (str), 'proper named' timezone
     """
     try:
-        px, py, rgb = get_color(lat, lon)
-        if rgb in bigdic.keys():
-            tz = bigdic[rgb]
-            return px, py, rgb, tz
+        pixel_column, pixel_row, rgb_values = get_pixel(lat, lon)
+        if rgb_values in bigdic.keys():
+            tz = bigdic[rgb_values]
+            return pixel_column, pixel_row, rgb_values, tz
 
-        if rgb in seadic.keys():  # If pixel is ocean,
-            tz = seadic[rgb]
+        if rgb_values in seadic.keys():  # If pixel is ocean,
+            tz = seadic[rgb_values]
             for bearing in range(0, 315, 45):  # look at 8 points around the original location.
                 new_lon, new_lat = where_go(lat, lon, bearing, DISTANCE)  # return a point
-                px, py, rgb = get_color(new_lat, new_lon)  # Get pixel values
-                if rgb not in seadic.keys():  # and compare.
-                    tz = bigdic[rgb]  # If pegs land it will stay on last land
-            return px, py, rgb, tz  # You are in the territorial waters of Deep Burgundy.
+                pixel_column, pixel_row, rgb_values = get_pixel(new_lat, new_lon)  # Get pixel values
+                if rgb_values not in seadic.keys():  # and compare.
+                    tz = bigdic[rgb_values]  # If pegs land it will stay on last land
+            return pixel_column, pixel_row, rgb_values, tz  # You are in the territorial waters of Deep Burgundy.
 
     except KeyError:
-        px, py, rgb = get_color(lat, lon)  # The pixel RGB may be off for edge reasons
-        rgb = tuple(round(value / color_spread) * color_spread for value in rgb)
-        if rgb in bigdic.keys():  # if is
-            tz = bigdic[rgb]  # use that.
-        if rgb in seadic.keys():
-            tz = seadic[rgb]
+        pixel_column, pixel_row, rgb_values = get_pixel(lat, lon)  # The pixel RGB may be off for edge reasons
+        rgb_values = tuple(round(value / color_spread) * color_spread for value in rgb_values)
+        if rgb_values in bigdic.keys():  # if is
+            tz = bigdic[rgb_values]  # use that.
+        elif rgb_values in seadic.keys():
+            tz = seadic[rgb_values]
         else:
             # print("Lasciate ogne speranza, voi ch'intrate")
             tz = "Gates'o'Hell/Houston"
-        return px, py, rgb, tz
-
-
-def get_color(lat, lon):
-    """Converts Latitude/Longitude to return pixel x/y coordinates and color value of the pixel.
-    Arguments:
-        lat (float), Latitude North (positive), South (negative)
-        lon (float), Longitude East (positive), West (negative)
-    Returns:
-        px (int), x pixel column in image
-        py (int), y pixel row in image
-        rgb (tuple of ints), RGB color tuple
-    """
-    x, y = coordinates(lon, lat)  # x = -pi --> pi; y = 1/2pi --> -1/2pi
-    px = int((x + pi) * ((size_x / 2) / pi))
-    py = int(size_y - (y + (pi / 2)) * (size_y / pi))
-    rgb = pix[px, py]
-    return px, py, rgb
+        return pixel_column, pixel_row, rgb_values, tz
 
 
 def where_go(lat, lon, azimuth, distance):
